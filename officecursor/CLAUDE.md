@@ -4,13 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an Office Add-in project for Excel, built with React and TypeScript. The add-in provides a task pane interface and supports both Excel desktop and web versions. It uses the Office JavaScript API and Microsoft's Fluent UI components for the interface.
+This is an Office Add-in project for Excel, built with React and TypeScript. The add-in provides a task pane with an AI-powered chat assistant, allowing users to interact with large language models directly within Excel. It uses the Office JavaScript API, Microsoft's Fluent UI components, and connects to the DeepSeek AI service.
 
 ## Key Architecture
 
 ### Project Structure
 - `src/taskpane/` - Main task pane React application
-  - `components/` - React components (App, Header, HeroList, TextInsertion)
+  - `components/` - React components (App, Chat, Settings, Navigation)
+  - `contexts/` - React Context for global state management (AppContext)
+  - `hooks/` - Custom React hooks for business logic (useChat)
+  - `services/` - Services for interacting with external APIs (deepseekApi)
   - `index.tsx` - Entry point
   - `taskpane.ts` - Office.js integration
 - `src/commands/` - Add-in commands that execute outside the task pane
@@ -20,7 +23,9 @@ This is an Office Add-in project for Excel, built with React and TypeScript. The
 
 ### Technology Stack
 - **React 18** with TypeScript
+- **React Context** for global state management
 - **Fluent UI React Components** (`@fluentui/react-components`)
+- **DeepSeek AI API** integration for chat functionality
 - **Office.js API** for Excel integration
 - **Webpack** for bundling with development server on HTTPS
 - **Babel** for transpilation
@@ -60,6 +65,25 @@ npm run prettier       # Format code
 npm run signin         # Sign in to M365 account for debugging
 npm run signout        # Sign out of M365 account
 ```
+
+## Core Functionality
+
+### AI Chat Assistant
+- The primary feature is a chat interface within the Excel task pane.
+- Users can send messages to a selected DeepSeek AI model and receive streaming responses.
+- The interface supports message history, copying responses, regenerating answers, and clearing the conversation.
+- State, including conversation history and user settings, is persisted in the browser's `localStorage`.
+
+### Settings Management
+- A dedicated settings page allows users to configure the connection to the DeepSeek API.
+- Users must provide their own API Key.
+- It's possible to select between different AI models (e.g., `deepseek-chat`, `deepseek-reasoner`).
+- A connection test feature helps validate the API Key and endpoint configuration.
+
+### State Management
+- The application uses React Context (`src/taskpane/contexts/AppContext.tsx`) for centralized state management.
+- The context provider (`AppProvider`) manages settings, chat messages, UI state (like the current page), and error information.
+- A custom hook (`useAppContext`) provides easy access to the state and actions throughout the component tree.
 
 ## Office Add-in Integration
 

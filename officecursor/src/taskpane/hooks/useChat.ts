@@ -1,3 +1,5 @@
+/* global console */
+
 import * as React from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { getDeepSeekAPI, DeepSeekAPIError } from "../services/deepseekApi";

@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Tooltip,
   Button,
   makeStyles,
   tokens,
@@ -16,16 +17,17 @@ import { useAppContext } from "../contexts/AppContext";
 
 const useStyles = makeStyles({
   navigation: {
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    borderRight: `1px solid ${tokens.colorNeutralStroke2}`,
     backgroundColor: tokens.colorNeutralBackground1,
-    padding: tokens.spacingVerticalS,
+    padding: `${tokens.spacingVerticalS} 0`,
     display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     gap: tokens.spacingHorizontalS,
   },
   navButton: {
-    minWidth: "40px",
-    height: "40px",
+    width: "48px",
+    height: "48px",
     borderRadius: tokens.borderRadiusMedium,
   },
   activeButton: {
@@ -48,27 +50,30 @@ const Navigation: React.FC = () => {
 
   return (
     <div className={styles.navigation}>
-      <Button
-        appearance={currentPage === "chat" ? "primary" : "subtle"}
-        icon={currentPage === "chat" ? <Chat24Filled /> : <Chat24Regular />}
-        onClick={() => handlePageChange("chat")}
-        className={styles.navButton}
-        title="对话"
-      />
-      <Button
-        appearance={currentPage === "conversations" ? "primary" : "subtle"}
-        icon={currentPage === "conversations" ? <History24Filled /> : <History24Regular />}
-        onClick={() => handlePageChange("conversations")}
-        className={styles.navButton}
-        title="对话历史"
-      />
-      <Button
-        appearance={currentPage === "settings" ? "primary" : "subtle"}
-        icon={currentPage === "settings" ? <Settings24Filled /> : <Settings24Regular />}
-        onClick={() => handlePageChange("settings")}
-        className={styles.navButton}
-        title="设置"
-      />
+      <Tooltip content="对话" relationship="label">
+        <Button
+          appearance={currentPage === "chat" ? "primary" : "subtle"}
+          icon={currentPage === "chat" ? <Chat24Filled /> : <Chat24Regular />}
+          onClick={() => handlePageChange("chat")}
+          className={styles.navButton}
+        />
+      </Tooltip>
+      <Tooltip content="对话历史" relationship="label">
+        <Button
+          appearance={currentPage === "conversations" ? "primary" : "subtle"}
+          icon={currentPage === "conversations" ? <History24Filled /> : <History24Regular />}
+          onClick={() => handlePageChange("conversations")}
+          className={styles.navButton}
+        />
+      </Tooltip>
+      <Tooltip content="设置" relationship="label">
+        <Button
+          appearance={currentPage === "settings" ? "primary" : "subtle"}
+          icon={currentPage === "settings" ? <Settings24Filled /> : <Settings24Regular />}
+          onClick={() => handlePageChange("settings")}
+          className={styles.navButton}
+        />
+      </Tooltip>
     </div>
   );
 };

@@ -10,10 +10,10 @@ This is an Office Add-in project for Excel, built with React and TypeScript. The
 
 ### Project Structure
 - `src/taskpane/` - Main task pane React application
-  - `components/` - React components (App, Chat, Settings, Navigation)
+  - `components/` - React components (App, Chat, EnhancedChat, Settings, Navigation)
   - `contexts/` - React Context for global state management (AppContext)
-  - `hooks/` - Custom React hooks for business logic (useChat)
-  - `services/` - Services for interacting with external APIs (deepseekApi)
+  - `hooks/` - Custom React hooks for business logic (useChat, usePerformance)
+  - `services/` - Services for interacting with external APIs (deepseekApi, officeService, securityService, storageService)
   - `index.tsx` - Entry point
   - `taskpane.ts` - Office.js integration
 - `src/commands/` - Add-in commands that execute outside the task pane

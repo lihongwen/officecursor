@@ -22,7 +22,7 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": ["office-js"]
+    "types": ["office-js", "jest"]
   },
   "include": [
     "src/**/*",

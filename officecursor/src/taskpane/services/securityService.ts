@@ -1,4 +1,5 @@
 /* eslint-env browser */
+/* global console, URL, location */
 
 export interface SecurityConfig {
   enableInputSanitization: boolean;

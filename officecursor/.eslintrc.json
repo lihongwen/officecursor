@@ -13,6 +13,18 @@
   "globals": {
     "Office": "readonly",
     "Excel": "readonly",
-    "Word": "readonly"
+    "Word": "readonly",
+    "console": "readonly",
+    "performance": "readonly",
+    "localStorage": "readonly",
+    "navigator": "readonly",
+    "URL": "readonly",
+    "location": "readonly",
+    "Blob": "readonly",
+    "setInterval": "readonly",
+    "clearInterval": "readonly",
+    "setTimeout": "readonly",
+    "clearTimeout": "readonly",
+    "window": "readonly"
   }
 }

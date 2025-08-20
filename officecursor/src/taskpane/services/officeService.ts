@@ -1,4 +1,4 @@
-/* global Excel Word console */
+/* global Office, Excel, Word, console */
 
 export interface OfficeServiceError extends Error {
   name: "OfficeServiceError";

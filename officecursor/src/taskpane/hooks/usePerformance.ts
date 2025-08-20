@@ -1,3 +1,5 @@
+/* global performance, setInterval, clearInterval, window, setTimeout, clearTimeout */
+
 import * as React from "react";
 
 export interface PerformanceMetrics {

@@ -1,4 +1,4 @@
-/* eslint-env browser */
+/* global navigator, localStorage, console, Blob */
 
 export interface StorageQuota {
   used: number;

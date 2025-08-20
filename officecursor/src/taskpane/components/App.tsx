@@ -14,12 +14,17 @@ const useStyles = makeStyles({
   root: {
     height: "100vh",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     overflow: "hidden",
+  },
+  navigation: {
+    flexShrink: 0,
   },
   content: {
     flex: 1,
     overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
   },
   errorBar: {
     margin: 0,
@@ -37,23 +42,25 @@ const AppContent: React.FC = () => {
 
   return (
     <div className={styles.root}>
-      {error && (
-        <MessageBar
-          intent="error"
-          className={styles.errorBar}
-        >
-          <MessageBarBody>
-            {error}
-            <button onClick={handleCloseError} style={{ marginLeft: '8px', border: 'none', background: 'transparent', cursor: 'pointer' }}>
-              ✕
-            </button>
-          </MessageBarBody>
-        </MessageBar>
-      )}
-      
-      <Navigation />
+      <div className={styles.navigation}>
+        <Navigation />
+      </div>
       
       <div className={styles.content}>
+        {error && (
+          <MessageBar
+            intent="error"
+            className={styles.errorBar}
+          >
+            <MessageBarBody>
+              {error}
+              <button onClick={handleCloseError} style={{ marginLeft: '8px', border: 'none', background: 'transparent', cursor: 'pointer' }}>
+                ✕
+              </button>
+            </MessageBarBody>
+          </MessageBar>
+        )}
+
         {currentPage === "chat" && <Chat />}
         {currentPage === "conversations" && <ConversationList />}
         {currentPage === "settings" && <Settings />}

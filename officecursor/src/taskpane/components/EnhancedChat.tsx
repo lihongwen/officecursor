@@ -30,11 +30,12 @@ import {
   Document24Regular,
   Warning24Regular,
 } from "@fluentui/react-icons";
-import { useAppContext, Message } from "../contexts/AppContext";
+import { useAppContext } from "../contexts/AppContext";
 import { useChat } from "../hooks/useChat";
 import { useVirtualizedMessages, usePerformance } from "../hooks/usePerformance";
 import { OfficeService, isExcelAvailable, isWordAvailable } from "../services/officeService";
 import { SecurityService } from "../services/securityService";
+import MessageItem from "./MessageItem";
 
 const useStyles = makeStyles({
   container: {
@@ -112,14 +113,20 @@ const useStyles = makeStyles({
     display: "flex",
     gap: tokens.spacingHorizontalS,
     alignItems: "flex-end",
+    position: "relative",
   },
   textInput: {
     flex: 1,
     minHeight: "40px",
     maxHeight: "120px",
+    paddingRight: "40px", // space for the button
   },
   sendButton: {
-    flexShrink: 0,
+    position: "absolute",
+    right: "8px",
+    bottom: "8px",
+    width: "32px",
+    height: "32px",
   },
   emptyState: {
     display: "flex",
@@ -149,159 +156,6 @@ const useStyles = makeStyles({
     padding: tokens.spacingVerticalXS,
   },
 });
-
-interface EnhancedMessageProps {
-  message: Message;
-  onCopy: (content: string) => void;
-  onRegenerate?: () => void;
-  onInsertToOffice: (content: string, format: 'text' | 'table') => void;
-  isLastAssistantMessage?: boolean;
-}
-
-const EnhancedMessage: React.FC<EnhancedMessageProps> = ({ 
-  message, 
-  onCopy, 
-  onRegenerate, 
-  onInsertToOffice,
-  isLastAssistantMessage 
-}) => {
-  const styles = useStyles();
-  const isUser = message.role === "user";
-  const [showSecurityWarning, setShowSecurityWarning] = React.useState(false);
-
-  // 安全检查
-  React.useEffect(() => {
-    if (message.role === "assistant") {
-      const filtered = SecurityService.filterOutput(message.content);
-      if (filtered !== message.content) {
-        setShowSecurityWarning(true);
-      }
-    }
-  }, [message]);
-
-  const handleCopy = () => {
-    onCopy(message.content);
-  };
-
-  const handleInsertAsText = () => {
-    onInsertToOffice(message.content, 'text');
-  };
-
-  const handleInsertAsTable = () => {
-    onInsertToOffice(message.content, 'table');
-  };
-
-  // 检测内容是否像表格数据
-  const isTableLike = React.useMemo(() => {
-    const lines = message.content.split('\n').filter(line => line.trim());
-    const hasTableMarkers = lines.some(line => line.includes('|') || line.includes('\t'));
-    const hasStructuredData = lines.length > 2 && lines.some(line => 
-      line.includes(':') || /^\d+\./.test(line.trim())
-    );
-    return hasTableMarkers || hasStructuredData;
-  }, [message.content]);
-
-  return (
-    <div className={mergeClasses(
-      styles.message, 
-      isUser ? styles.userMessage : styles.assistantMessage
-    )}>
-      {showSecurityWarning && (
-        <MessageBar intent="warning" className={styles.securityWarning}>
-          <MessageBarBody>
-            <Warning24Regular /> 此消息包含可能不安全的内容，已进行过滤处理
-          </MessageBarBody>
-        </MessageBar>
-      )}
-      
-      <div 
-        className={mergeClasses(
-          styles.messageCard,
-          isUser ? styles.userMessageCard : styles.assistantMessageCard
-        )}
-      >
-        <Text className={styles.messageText} size={300}>
-          {SecurityService.filterOutput(message.content)}
-        </Text>
-        {message.isLoading && (
-          <div style={{ display: "flex", alignItems: "center", gap: tokens.spacingHorizontalS, marginTop: tokens.spacingVerticalS }}>
-            <Spinner size="tiny" />
-            <Text size={200}>正在输入...</Text>
-          </div>
-        )}
-      </div>
-      
-      {!message.isLoading && (
-        <div className={styles.messageActions}>
-          <Button
-            appearance="subtle"
-            size="small"
-            icon={<Copy24Regular />}
-            onClick={handleCopy}
-            title="复制"
-          />
-          
-          {!isUser && isExcelAvailable() && (
-            <Menu>
-              <MenuTrigger disableButtonEnhancement>
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Table24Regular />}
-                  iconPosition="before"
-                  title="插入到Excel"
-                >
-                  Excel
-                  <ChevronDown24Regular />
-                </Button>
-              </MenuTrigger>
-              <MenuPopover>
-                <MenuList>
-                  <MenuItem 
-                    icon={<Document24Regular />} 
-                    onClick={handleInsertAsText}
-                  >
-                    作为文本插入
-                  </MenuItem>
-                  {isTableLike && (
-                    <MenuItem 
-                      icon={<Table24Regular />} 
-                      onClick={handleInsertAsTable}
-                    >
-                      作为表格插入
-                    </MenuItem>
-                  )}
-                </MenuList>
-              </MenuPopover>
-            </Menu>
-          )}
-
-          {!isUser && isWordAvailable() && (
-            <Button
-              appearance="subtle"
-              size="small"
-              icon={<Document24Regular />}
-              onClick={handleInsertAsText}
-              title="插入到Word"
-            >
-              Word
-            </Button>
-          )}
-          
-          {isLastAssistantMessage && onRegenerate && (
-            <Button
-              appearance="subtle"
-              size="small"
-              icon={<ArrowClockwise24Regular />}
-              onClick={onRegenerate}
-              title="重新生成"
-            />
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
 
 const EnhancedChat: React.FC = () => {
   const styles = useStyles();
@@ -502,7 +356,7 @@ const EnhancedChat: React.FC = () => {
                 !message.isLoading;
               
               return (
-                <EnhancedMessage
+                <MessageItem
                   key={message.id}
                   message={message}
                   onCopy={handleCopyMessage}
@@ -522,7 +376,7 @@ const EnhancedChat: React.FC = () => {
           <Textarea
             ref={textareaRef}
             className={styles.textInput}
-            placeholder="输入消息... (Shift+Enter 换行，Enter 发送)"
+            placeholder="输入消息... (Shift+Enter 换行)"
             value={inputValue}
             onChange={(_, data) => setInputValue(data.value)}
             onKeyDown={handleKeyPress}
@@ -532,12 +386,11 @@ const EnhancedChat: React.FC = () => {
           <Button
             className={styles.sendButton}
             appearance="primary"
-            icon={isLoading ? <Spinner size="small" /> : <Send24Regular />}
+            icon={isLoading ? <Spinner size="tiny" /> : <Send24Regular />}
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || isLoading}
-          >
-            发送
-          </Button>
+            title="发送"
+          />
         </div>
       </div>
     </div>

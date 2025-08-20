@@ -2,11 +2,9 @@ import * as React from "react";
 import {
   Card,
   CardHeader,
-  CardPreview,
   Text,
   Button,
   Input,
-  Label,
   Dropdown,
   Option,
   Field,
@@ -16,6 +14,8 @@ import {
   Spinner,
   makeStyles,
   tokens,
+  Divider,
+  Title3,
 } from "@fluentui/react-components";
 import {
   Settings24Regular,
@@ -28,21 +28,20 @@ import { getDeepSeekAPI, DeepSeekAPIError } from "../services/deepseekApi";
 
 const useStyles = makeStyles({
   container: {
-    padding: tokens.spacingVerticalM,
+    padding: tokens.spacingHorizontalXXL,
     display: "flex",
     flexDirection: "column",
-    gap: tokens.spacingVerticalL,
-    maxWidth: "600px",
-    margin: "0 auto",
+    gap: tokens.spacingVerticalXXL,
     height: "100%",
     overflow: "auto",
-    "@media (max-width: 480px)": {
-      padding: tokens.spacingVerticalS,
-      gap: tokens.spacingVerticalM,
-    },
+  },
+  header: {
+    paddingBottom: tokens.spacingVerticalL,
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
   },
   card: {
     width: "100%",
+    maxWidth: "600px",
   },
   field: {
     display: "flex",
@@ -60,7 +59,7 @@ const useStyles = makeStyles({
     },
   },
   testResult: {
-    marginTop: tokens.spacingVerticalS,
+    marginTop: tokens.spacingVerticalL,
   },
 });
 
@@ -164,128 +163,112 @@ const Settings: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.header}>
+        <Title3>应用设置</Title3>
+      </div>
+
       <Card className={styles.card}>
         <CardHeader
-          image={<Settings24Regular />}
-          header={<Text weight="semibold">AI助手设置</Text>}
-          description="配置DeepSeek API连接和模型选择"
+          header={<Text weight="semibold">API 凭证</Text>}
+          description="连接到 DeepSeek API 所需的凭证"
         />
-        <CardPreview>
-          <div style={{ padding: tokens.spacingVerticalM }}>
-            <div className={styles.field}>
-              <Field label="API Key" required>
-                <Input
-                  placeholder="输入你的DeepSeek API Key"
-                  type="password"
-                  value={localSettings.apiKey}
-                  onChange={(_, data) => handleSettingChange("apiKey", data.value)}
-                  contentBefore={<Key24Regular />}
-                />
-              </Field>
-              <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
-                在 <a href="https://platform.deepseek.com" target="_blank" rel="noopener noreferrer">
-                  platform.deepseek.com
-                </a> 获取你的API Key
-              </Text>
-            </div>
-
-            <div className={styles.field}>
-              <Field label="模型选择">
-                <Dropdown
-                  placeholder="选择AI模型"
-                  value={localSettings.selectedModel}
-                  selectedOptions={[localSettings.selectedModel]}
-                  onOptionSelect={(_, data) => {
-                    if (data.optionValue) {
-                      handleSettingChange("selectedModel", data.optionValue);
-                    }
-                  }}
-                >
-                  {availableModels.map((model) => (
-                    <Option key={model.key} value={model.key}>
-                      {model.text}
-                    </Option>
-                  ))}
-                </Dropdown>
-              </Field>
-            </div>
-
-            <div className={styles.field}>
-              <Field label="API端点">
-                <Input
-                  placeholder="https://api.deepseek.com"
-                  value={localSettings.baseUrl}
-                  onChange={(_, data) => handleSettingChange("baseUrl", data.value)}
-                />
-              </Field>
-              <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
-                通常不需要修改，除非使用自定义端点
-              </Text>
-            </div>
-
-            <div className={styles.buttonGroup}>
-              <Button
-                appearance="primary"
-                disabled={!isFormChanged}
-                onClick={handleSaveSettings}
-              >
-                保存设置
-              </Button>
-              
-              <Button
-                appearance="secondary"
-                disabled={isTestingConnection || !localSettings.apiKey.trim()}
-                onClick={handleTestConnection}
-                icon={isTestingConnection ? <Spinner size="tiny" /> : undefined}
-              >
-                {isTestingConnection ? "测试中..." : "测试连接"}
-              </Button>
-            </div>
-
-            {testResult && (
-              <div className={styles.testResult}>
-                <MessageBar intent={testResult.success ? "success" : "error"}>
-                  <MessageBarBody>
-                    <MessageBarTitle>
-                      {testResult.success ? (
-                        <CheckmarkCircle24Regular />
-                      ) : (
-                        <ErrorCircle24Regular />
-                      )}
-                      {testResult.message}
-                    </MessageBarTitle>
-                  </MessageBarBody>
-                </MessageBar>
-              </div>
-            )}
+        <div style={{ padding: tokens.spacingVerticalL }}>
+          <div className={styles.field}>
+            <Field label="API Key" required>
+              <Input
+                placeholder="输入你的DeepSeek API Key"
+                type="password"
+                value={localSettings.apiKey}
+                onChange={(_, data) => handleSettingChange("apiKey", data.value)}
+                contentBefore={<Key24Regular />}
+              />
+            </Field>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+              在 <a href="https://platform.deepseek.com" target="_blank" rel="noopener noreferrer">
+                platform.deepseek.com
+              </a> 获取你的API Key
+            </Text>
           </div>
-        </CardPreview>
+
+          <div className={styles.field}>
+            <Field label="API 端点 (可选)">
+              <Input
+                placeholder="https://api.deepseek.com"
+                value={localSettings.baseUrl}
+                onChange={(_, data) => handleSettingChange("baseUrl", data.value)}
+              />
+            </Field>
+            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+              通常不需要修改，除非使用自定义端点
+            </Text>
+          </div>
+        </div>
       </Card>
 
       <Card className={styles.card}>
         <CardHeader
-          header={<Text weight="semibold">关于DeepSeek模型</Text>}
+          header={<Text weight="semibold">模型配置</Text>}
+          description="选择你希望使用的 AI 模型"
         />
-        <CardPreview>
-          <div style={{ padding: tokens.spacingVerticalM }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: tokens.spacingVerticalS }}>
-              <div>
-                <Text weight="semibold">DeepSeek Chat (V3-0324)</Text>
-                <Text size={200} style={{ color: tokens.colorNeutralForeground2 }}>
-                  通用对话模型，适合日常聊天、代码生成、文档编写等任务
-                </Text>
-              </div>
-              
-              <div>
-                <Text weight="semibold">DeepSeek Reasoner (R1-0528)</Text>
-                <Text size={200} style={{ color: tokens.colorNeutralForeground2 }}>
-                  推理专用模型，适合复杂逻辑推理、数学问题、分析任务
-                </Text>
-              </div>
-            </div>
+        <div style={{ padding: tokens.spacingVerticalL }}>
+          <div className={styles.field}>
+            <Field label="模型选择">
+              <Dropdown
+                placeholder="选择AI模型"
+                value={localSettings.selectedModel}
+                selectedOptions={[localSettings.selectedModel]}
+                onOptionSelect={(_, data) => {
+                  if (data.optionValue) {
+                    handleSettingChange("selectedModel", data.optionValue);
+                  }
+                }}
+              >
+                {availableModels.map((model) => (
+                  <Option key={model.key} value={model.key}>
+                    {model.text}
+                  </Option>
+                ))}
+              </Dropdown>
+            </Field>
           </div>
-        </CardPreview>
+        </div>
       </Card>
+
+      <div className={styles.buttonGroup}>
+        <Button
+          appearance="primary"
+          disabled={!isFormChanged}
+          onClick={handleSaveSettings}
+        >
+          保存设置
+        </Button>
+        
+        <Button
+          appearance="secondary"
+          disabled={isTestingConnection || !localSettings.apiKey.trim()}
+          onClick={handleTestConnection}
+          icon={isTestingConnection ? <Spinner size="tiny" /> : undefined}
+        >
+          {isTestingConnection ? "测试中..." : "测试连接"}
+        </Button>
+      </div>
+
+      {testResult && (
+        <div className={styles.testResult}>
+          <MessageBar intent={testResult.success ? "success" : "error"}>
+            <MessageBarBody>
+              <MessageBarTitle>
+                {testResult.success ? (
+                  <CheckmarkCircle24Regular />
+                ) : (
+                  <ErrorCircle24Regular />
+                )}
+                {testResult.message}
+              </MessageBarTitle>
+            </MessageBarBody>
+          </MessageBar>
+        </div>
+      )}
     </div>
   );
 };

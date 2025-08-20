@@ -167,8 +167,8 @@ export const useVirtualizedMessages = <T>(
 // 防抖Hook优化
 export const useOptimizedDebounce = <T>(value: T, delay: number, maxWait?: number) => {
   const [debouncedValue, setDebouncedValue] = React.useState(value);
-  const timeoutRef = React.useRef<number>();
-  const maxTimeoutRef = React.useRef<number>();
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout>>();
+  const maxTimeoutRef = React.useRef<ReturnType<typeof setTimeout>>();
   const lastCallTimeRef = React.useRef<number>(Date.now());
 
   React.useEffect(() => {

@@ -2,8 +2,6 @@ import * as React from "react";
 import {
   Button,
   Text,
-  List,
-  ListItem,
   Menu,
   MenuTrigger,
   MenuPopover,
@@ -160,65 +158,63 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   };
 
   return (
-    <ListItem>
-      <div
-        className={`${styles.conversationItem} ${isActive ? styles.activeConversation : ""}`}
-        onClick={onSelect}
-      >
-        <div className={styles.conversationContent}>
-          <Chat24Regular />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {isRenaming ? (
-              <input
-                type="text"
-                value={titleInput}
-                onChange={(e) => setTitleInput(e.target.value)}
-                onBlur={handleSaveRename}
-                onKeyDown={handleKeyDown}
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  color: "inherit",
-                  font: "inherit",
-                  width: "100%",
-                  outline: "none",
-                }}
-                autoFocus
-              />
-            ) : (
-              <>
-                <Text className={styles.conversationTitle} size={300}>
-                  {conversation.title}
-                </Text>
-                <div className={styles.conversationMeta}>
-                  {formatDate(conversation.updatedAt)}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-        <Menu>
-          <MenuTrigger disableButtonEnhancement>
-            <Button
-              appearance="subtle"
-              icon={<MoreVertical24Regular />}
-              className={styles.menuButton}
-              onClick={(e) => e.stopPropagation()}
+    <div
+      className={`${styles.conversationItem} ${isActive ? styles.activeConversation : ""}`}
+      onClick={onSelect}
+    >
+      <div className={styles.conversationContent}>
+        <Chat24Regular />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {isRenaming ? (
+            <input
+              type="text"
+              value={titleInput}
+              onChange={(e) => setTitleInput(e.target.value)}
+              onBlur={handleSaveRename}
+              onKeyDown={handleKeyDown}
+              style={{
+                border: "none",
+                background: "transparent",
+                color: "inherit",
+                font: "inherit",
+                width: "100%",
+                outline: "none",
+              }}
+              autoFocus
             />
-          </MenuTrigger>
-          <MenuPopover>
-            <MenuList>
-              <MenuItem icon={<Edit24Regular />} onClick={handleRename}>
-                重命名
-              </MenuItem>
-              <MenuItem icon={<Delete24Regular />} onClick={onDelete}>
-                删除
-              </MenuItem>
-            </MenuList>
-          </MenuPopover>
-        </Menu>
+          ) : (
+            <>
+              <Text className={styles.conversationTitle} size={300}>
+                {conversation.title}
+              </Text>
+              <div className={styles.conversationMeta}>
+                {formatDate(conversation.updatedAt)}
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </ListItem>
+      <Menu>
+        <MenuTrigger disableButtonEnhancement>
+          <Button
+            appearance="subtle"
+            icon={<MoreVertical24Regular />}
+            className={styles.menuButton}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </MenuTrigger>
+        <MenuPopover>
+          <MenuList>
+            <MenuItem icon={<Edit24Regular />} onClick={handleRename}>
+              重命名
+            </MenuItem>
+            <MenuItem icon={<Delete24Regular />} onClick={onDelete}>
+              删除
+            </MenuItem>
+          </MenuList>
+        </MenuPopover>
+      </Menu>
+    </div>
   );
 };
 
@@ -273,7 +269,7 @@ const ConversationList: React.FC = () => {
             </Button>
           </div>
         ) : (
-          <List>
+          <div role="list">
             {conversations.map((conversation) => (
               <ConversationItem
                 key={conversation.id}
@@ -284,7 +280,7 @@ const ConversationList: React.FC = () => {
                 onRename={(newTitle) => handleRenameConversation(conversation.id, newTitle)}
               />
             ))}
-          </List>
+          </div>
         )}
       </div>
     </div>

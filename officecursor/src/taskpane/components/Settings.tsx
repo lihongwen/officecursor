@@ -173,35 +173,38 @@ const Settings: React.FC = () => {
           description="连接到 DeepSeek API 所需的凭证"
         />
         <div style={{ padding: tokens.spacingVerticalL }}>
-          <div className={styles.field}>
-            <Field label="API Key" required>
-              <Input
-                placeholder="输入你的DeepSeek API Key"
-                type="password"
-                value={localSettings.apiKey}
-                onChange={(_, data) => handleSettingChange("apiKey", data.value)}
-                contentBefore={<Key24Regular />}
-              />
-            </Field>
-            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
-              在 <a href="https://platform.deepseek.com" target="_blank" rel="noopener noreferrer">
-                platform.deepseek.com
-              </a> 获取你的API Key
-            </Text>
-          </div>
+          <form>
+            <div className={styles.field}>
+              <Field label="API Key" required>
+                <Input
+                  placeholder="输入你的DeepSeek API Key"
+                  type="password"
+                  value={localSettings.apiKey}
+                  onChange={(_, data) => handleSettingChange("apiKey", data.value)}
+                  contentBefore={<Key24Regular />}
+                  autoComplete="current-password"
+                />
+              </Field>
+              <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+                在 <a href="https://platform.deepseek.com" target="_blank" rel="noopener noreferrer">
+                  platform.deepseek.com
+                </a> 获取你的API Key
+              </Text>
+            </div>
 
-          <div className={styles.field}>
-            <Field label="API 端点 (可选)">
-              <Input
-                placeholder="https://api.deepseek.com"
-                value={localSettings.baseUrl}
-                onChange={(_, data) => handleSettingChange("baseUrl", data.value)}
-              />
-            </Field>
-            <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
-              通常不需要修改，除非使用自定义端点
-            </Text>
-          </div>
+            <div className={styles.field}>
+              <Field label="API 端点 (可选)">
+                <Input
+                  placeholder="https://api.deepseek.com"
+                  value={localSettings.baseUrl}
+                  onChange={(_, data) => handleSettingChange("baseUrl", data.value)}
+                />
+              </Field>
+              <Text size={200} style={{ color: tokens.colorNeutralForeground3 }}>
+                通常不需要修改，除非使用自定义端点
+              </Text>
+            </div>
+          </form>
         </div>
       </Card>
 

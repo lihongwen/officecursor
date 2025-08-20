@@ -15,14 +15,19 @@
     "sourceMap": true,
     "target": "es5",
     "lib": [
-      "es7",
+      "es2017",
       "dom"
     ],
     "pretty": true,
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
+    "types": ["office-js"]
   },
+  "include": [
+    "src/**/*",
+    "src/global.d.ts"
+  ],
   "exclude": [
     "node_modules"
   ],

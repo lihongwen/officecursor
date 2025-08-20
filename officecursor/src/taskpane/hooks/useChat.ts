@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import * as React from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { getDeepSeekAPI, DeepSeekAPIError } from "../services/deepseekApi";
@@ -64,7 +63,7 @@ export const useChat = () => {
           onProgress: (chunk: string) => {
             assistantResponse += chunk;
             console.log("Streaming chunk received, total length:", assistantResponse.length);
-            
+
             // Update the last assistant message with streaming content
             actions.updateLastAssistantMessage({
               content: assistantResponse,
@@ -79,7 +78,6 @@ export const useChat = () => {
           content: assistantResponse,
           isLoading: false,
         });
-        
       } catch (error) {
         // eslint-disable-next-line no-undef
         console.error("Chat error:", error);

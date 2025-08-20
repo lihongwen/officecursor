@@ -4,5 +4,15 @@
   ],
   "extends": [
     "plugin:office-addins/react"
-  ]
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "globals": {
+    "Office": "readonly",
+    "Excel": "readonly",
+    "Word": "readonly"
+  }
 }

@@ -5,7 +5,6 @@ import {
   Text,
   Button,
   Textarea,
-  Avatar,
   Badge,
   Spinner,
   makeStyles,
@@ -15,11 +14,10 @@ import {
 } from "@fluentui/react-components";
 import {
   Send24Regular,
-  Person24Regular,
-  Bot24Regular,
   Delete24Regular,
   Copy24Regular,
   ArrowClockwise24Regular,
+  Bot24Regular,
 } from "@fluentui/react-icons";
 import { useAppContext, Message } from "../contexts/AppContext";
 import { useChat } from "../hooks/useChat";
@@ -52,26 +50,32 @@ const useStyles = makeStyles({
   },
   message: {
     display: "flex",
-    gap: tokens.spacingHorizontalM,
+    flexDirection: "column",
+    gap: tokens.spacingVerticalXS,
     maxWidth: "100%",
+    marginBottom: tokens.spacingVerticalM,
   },
   userMessage: {
-    flexDirection: "row-reverse",
+    alignItems: "flex-end",
   },
-  messageContent: {
-    flex: 1,
-    minWidth: 0,
+  assistantMessage: {
+    alignItems: "flex-start",
   },
   messageCard: {
     maxWidth: "85%",
     wordBreak: "break-word",
-    boxShadow: tokens.shadow4,
+    borderRadius: tokens.borderRadiusLarge,
+    border: "none",
+    boxShadow: "none",
+    padding: tokens.spacingVerticalM,
   },
   userMessageCard: {
     backgroundColor: tokens.colorBrandBackground2,
+    color: tokens.colorNeutralForegroundOnBrand,
   },
   assistantMessageCard: {
     backgroundColor: tokens.colorNeutralBackground2,
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
   },
   messageText: {
     whiteSpace: "pre-wrap",
@@ -79,9 +83,10 @@ const useStyles = makeStyles({
     lineHeight: 1.5,
   },
   messageActions: {
-    marginTop: tokens.spacingVerticalXS,
     display: "flex",
-    gap: tokens.spacingHorizontalS,
+    gap: tokens.spacingHorizontalXS,
+    marginTop: tokens.spacingVerticalXS,
+    justifyContent: "flex-start",
   },
   inputContainer: {
     padding: tokens.spacingVerticalM,
@@ -142,54 +147,46 @@ const MessageComponent: React.FC<{
   };
 
   return (
-    <div className={mergeClasses(styles.message, isUser && styles.userMessage)}>
-      <Avatar
-        icon={isUser ? <Person24Regular /> : <Bot24Regular />}
-        color={isUser ? "brand" : "colorful"}
-        size={32}
-      />
-      <div className={styles.messageContent}>
-        <Card 
-          className={mergeClasses(
-            styles.messageCard,
-            isUser ? styles.userMessageCard : styles.assistantMessageCard
-          )}
-        >
-          <div style={{ padding: tokens.spacingVerticalS }}>
-            <Text className={styles.messageText} size={300}>
-              {message.content}
-            </Text>
-            {message.isLoading && (
-              <div className={styles.typingIndicator}>
-                <Spinner size="tiny" />
-                <Text size={200}>正在输入...</Text>
-              </div>
-            )}
-            {!message.isLoading && (
-              <div className={styles.messageActions}>
-                <Button
-                  appearance="subtle"
-                  size="small"
-                  icon={<Copy24Regular />}
-                  onClick={handleCopy}
-                >
-                  复制
-                </Button>
-                {isLastAssistantMessage && onRegenerate && (
-                  <Button
-                    appearance="subtle"
-                    size="small"
-                    icon={<ArrowClockwise24Regular />}
-                    onClick={onRegenerate}
-                  >
-                    重新生成
-                  </Button>
-                )}
-              </div>
-            )}
+    <div className={mergeClasses(
+      styles.message, 
+      isUser ? styles.userMessage : styles.assistantMessage
+    )}>
+      <div 
+        className={mergeClasses(
+          styles.messageCard,
+          isUser ? styles.userMessageCard : styles.assistantMessageCard
+        )}
+      >
+        <Text className={styles.messageText} size={300}>
+          {message.content}
+        </Text>
+        {message.isLoading && (
+          <div className={styles.typingIndicator}>
+            <Spinner size="tiny" />
+            <Text size={200}>正在输入...</Text>
           </div>
-        </Card>
+        )}
       </div>
+      {!message.isLoading && (
+        <div className={styles.messageActions}>
+          <Button
+            appearance="subtle"
+            size="small"
+            icon={<Copy24Regular />}
+            onClick={handleCopy}
+            title="复制"
+          />
+          {isLastAssistantMessage && onRegenerate && (
+            <Button
+              appearance="subtle"
+              size="small"
+              icon={<ArrowClockwise24Regular />}
+              onClick={onRegenerate}
+              title="重新生成"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -197,12 +194,19 @@ const MessageComponent: React.FC<{
 const Chat: React.FC = () => {
   const styles = useStyles();
   const { state, actions } = useAppContext();
-  const { messages, settings } = state;
+  const { messages, settings, currentConversationId } = state;
   const { sendMessage, regenerateLastResponse, isLoading } = useChat();
   
   const [inputValue, setInputValue] = React.useState("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  // Create a new conversation if none exists
+  React.useEffect(() => {
+    if (!currentConversationId && messages.length === 0) {
+      actions.createNewConversation();
+    }
+  }, [currentConversationId, messages.length, actions]);
 
   // Auto-scroll to bottom when new messages arrive
   React.useEffect(() => {

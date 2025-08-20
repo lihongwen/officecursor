@@ -4,6 +4,7 @@ import { AppProvider, useAppContext } from "../contexts/AppContext";
 import Navigation from "./Navigation";
 import Chat from "./Chat";
 import Settings from "./Settings";
+import ConversationList from "./ConversationList";
 
 interface AppProps {
   title: string;
@@ -53,7 +54,9 @@ const AppContent: React.FC = () => {
       <Navigation />
       
       <div className={styles.content}>
-        {currentPage === "chat" ? <Chat /> : <Settings />}
+        {currentPage === "chat" && <Chat />}
+        {currentPage === "conversations" && <ConversationList />}
+        {currentPage === "settings" && <Settings />}
       </div>
     </div>
   );
